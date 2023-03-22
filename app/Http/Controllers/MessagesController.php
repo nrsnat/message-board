@@ -23,7 +23,6 @@ class MessagesController extends Controller
     {
         //インスタンス作成
         $message = new Message;
-        
         // メッセージ作成ビューを表示
         return view('messages.create', [
             'message' => $message,
@@ -33,6 +32,12 @@ class MessagesController extends Controller
     // postでmessages/にアクセスされた場合の「新規登録処理」
     public function store(Request $request)
     {
+        // バリデーション　空ではない　かつ　255文字がmax
+        //　バリデーションエラーが発生した場合、自動リダイレクトかつ$errors変数にメッセージが格納される
+        $request->validate([
+            'content' => 'required|max:255',
+        ]);
+        
         //メッセージを作成
         $message = new Message;
         $message->content = $request->content; //$request から content を取り出して、新規作成したメッセージインスタンスに代入・保存
@@ -69,6 +74,10 @@ class MessagesController extends Controller
     // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'content' => 'required|max:255',
+        ]);
+        
         // idの値でメッセージを検索して取得
         $message = Message::findOrFail($id);
         // メッセージを更新
